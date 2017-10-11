@@ -1,23 +1,39 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import axios from 'axios';
+
+import Form from './Form';
 
 class App extends Component {
    state = {
       people: []
    }
+
    componentDidMount(){
-      axios.get('http://localhost:8080/')
+      this._fetchPeople();
+   }
+   _fetchPeople = () => {
+      axios.get('http://localhost:8080')
          .then(response => {
             console.log(response);
             this.setState({people: response.data })
          })
    }
 
+   _addNewPerson = (personData) => {
+      axios.post('http://localhost:8080', personData)
+         .then( response => {
+            this._fetchPeople();
+         })
+
+   }
+
    render() {
       return (
          <div className="container">
+            <Form
+               addNewPerson={this._addNewPerson}
+            />
             <ul>
                {this.state.people.map(person => {
                   return (
@@ -27,6 +43,7 @@ class App extends Component {
                   );
                })}
             </ul>
+
          </div>
       );
    }
